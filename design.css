@@ -1,0 +1,124 @@
+body {
+    background-image: url(teacher.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+.front {
+  padding: 20px;
+  background-color: rgba(0, 157, 255, 0.23);
+  border-color: rgb(255, 255, 255);
+  box-shadow: 1px 2px 100px 2px rgb(0, 0, 0);
+  border-radius: 20px;
+  height: 400px;
+  width: 500px;
+  margin: 70px auto;
+  text-align: center;
+  transform: translateY(ease);
+  transition: 0.3s ease;
+  padding-right: 20px;
+  padding-left: 20px;
+  
+}
+
+h1 {
+  color: rgb(255, 255, 255);
+  font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 4px 4px #000000; 
+}
+
+h2 
+{
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  color:rgb(255, 255, 255);
+  text-shadow: 2px 2px rgb(0, 0, 0);
+}
+
+input[type="password"] {
+  width: 50%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  font-size: 16px;
+}
+
+input[type="blue"]:focus {
+  border-color: #555;
+  background-color: #e6f7ff;
+  outline: none;
+}
+
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-left: 20px; 
+}
+
+.password-field::before {
+  content: "🔒";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+}
+
+.enter {
+  margin-top: 10px;
+  height: 40px;
+  width: 80px;
+  border-radius: 6px;
+  font-family: arial;
+  border-color:  #014046;
+  transition: width 0.40s;
+  cursor: pointer; 
+}
+
+.enter:hover {
+  width: 100px;
+    
+}
+
+ body {
+  font-family: Arial, sans-serif;
+  padding: 40px;
+ }
+
+ input {
+  padding: 8px;
+  font-size: 16px;
+}
+ button {
+  background-color: rgb(30, 78, 252);
+  padding: 8px 12px;
+  font-size: 16px;
+  margin-left: 10px;
+    }
+.error {
+  color: red;
+  margin-top: 10px;
+    }
+
+.forget {
+  margin-top: 10px;
+  height: 40px;
+  width: 150px;
+  border-radius: 6px;
+  font-family: arial;
+  border-color:  #014046;
+  transition: width 0.40s;
+  cursor: pointer; 
+    }
+.forget:hover {
+  height: 40px;
+  width: 190px;
+
+ }

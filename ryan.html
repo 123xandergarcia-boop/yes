@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Teacher's Day</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #001f3f;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      color: white;
+    }
+
+    .reveal-button {
+      background-color: #3399ff;
+      color: #ffffff;
+      font-size: 18px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .reveal-button:hover {
+      background-color: #0059b3;
+      color: #ffffff;
+    }
+
+    .card {
+      display: none;
+      margin-top: 40px;
+      background: #095289;
+      padding: 40px 60px;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0, 123, 255, 0.2);
+      max-width: 600px;
+      text-align: center;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #66ccff;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #e0f0ff;
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-style: italic;
+      color: #a0cfff;
+    }
+
+    .heart {
+      color: #1464b4;
+      font-size: 2em;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="reveal-button" onclick="showMessage()">✨ Click to Reveal Your Message</button>
+
+    <div class="card" id="messageCard">
+      <h1>Happy Teacher’s Day 🌟</h1>
+      <p> Dear Sir Ryan. <br><br> 
+        You're my adviser when I was in grade 11 and I didn't do something for you to know that I appreciate all of your sacrifices, hardworks, and efforts... so hopefully<br><br> 
+        This will be something that you're gonna be happy sir.<br><br><br> Thank you for everything that you've taught to all of us and we appreciate it all,<br> Thank you for everything, you build something big because of your efforts
+        <br> Thank you so much... This letter is not that big but I hope you like it sir... Again Thank you.
+        
+      </p>
+      <div class="footer">
+        With deep respect and gratitude,<br>
+        <strong>Your Grateful Student Alex. 💙</strong>
+        <div class="heart">💙</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showMessage() {
+      const card = document.getElementById("messageCard");
+      card.style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

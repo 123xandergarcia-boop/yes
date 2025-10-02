@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Note</title>
+    <link rel="stylesheet" href="design.css">
+</head>
+
+<body>
+
+
+         <div class="front"> 
+            <h1>Welcome Teacher!</h1>
+            <h2>What is your favorite color?</h2>
+            
+  <input id="Blue" type="password" placeholder="Password"><br>
+  <button onclick="checkPassword()" class="enter">Submit</button>
+  <a href="not.html" ><button class="forget" >forget password</button></a>
+
+ 
+  <div id="error" class="error"></div>
+   
+
+  <!-- black sir lester --><!-- mam sha --><!-- sir lester -->
+  <script>
+    
+    const passwordMap = {
+      "black": "lester.html", 
+      "orange": "sha.html",
+      "blue": "ryan.html"
+    };
+    function checkPassword() {
+      const input = document.getElementById("Blue").value;
+      const errorDiv = document.getElementById("error");
+
+      if (passwordMap[input]) {
+        window.location.href = passwordMap[input];
+      } else {
+        errorDiv.textContent = "Incorrect password. Please try again." ; 
+      }
+     }
+    </script>
+
+    
+</body>
+</html>

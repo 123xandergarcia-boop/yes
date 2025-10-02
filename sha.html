@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Teacher's Day</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #fdf6e3, #ffecd2);
+      font-family: 'Georgia', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .reveal-button {
+      background-color: #d35400;
+      color: white;
+      font-size: 18px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .reveal-button:hover {
+      background-color: #e67e22;
+    }
+
+    .card {
+      display: none;
+      margin-top: 40px;
+      background: white;
+      padding: 40px 60px;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      text-align: center;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #d35400;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-style: italic;
+      color: #888;
+    }
+
+    .heart {
+      color: #e74c3c;
+      font-size: 2em;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="reveal-button" onclick="showMessage()">🎁 Click to Open Your Message</button>
+
+    <div class="card" id="messageCard">
+      <h1>Happy Teacher's Day! 🍎</h1>
+      <p>
+        Dear Ma'am Sha,<br><br>
+        Sa espesyal na araw na ito, gusto ko lang pong magpasalamat sa inyo, Ma’am sha hindi lang po sa pagtuturo ng mga aralin, kundi pati na rin sa paggising ng aming kuryusidad, pagbabahagi ng karunungan, at paniniwala sa amin kahit noong hindi kami naniniwala sa aming sarili.<br><br>
+
+Nagtatanim po kayo ng mga binhi ng kaalaman na patuloy na tutubo magpakailanman. Ang inyong gabay, pasensya, at pagmamahal sa pagtuturo ay nag-iwan ng matibay na epekto sa amin.<br><br>
+
+Hindi lang po kayo isang guro isa po kayong mentor, tagapagbigay-inspirasyon, at tunay na bayani. Maraming salamat po kahit na super makulit kami hehe. Thank you po, Ma’am!
+      </p>
+      <div class="footer">
+        With heartfelt gratitude,<br>
+        <strong>Your Student Alex. 💖</strong>
+        <div class="heart">❤️</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showMessage() {
+      const card = document.getElementById("messageCard");
+      card.style.display = "block";
+    }
+  </script>
+
+</body>
+</html>
+

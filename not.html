@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Important System Notice</title>
+<style>
+  :root{
+    --bg:#020204;
+    --green:#39ff14;
+    --red:#ff3344;
+    --mono: "Courier New", Courier, monospace;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:#ddd;font-family:var(--mono);}
+  canvas#matrix{position:fixed;left:0;top:0;width:100%;height:100%;z-index:0;mix-blend-mode:screen;opacity:0.18;}
+  .overlay{
+    position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, rgba(2,2,4,0.25), rgba(2,2,4,0.6));
+    overflow:hidden;
+  }
+
+  /* Main box */
+  .box{
+    width:min(1000px,94vw);height:min(700px,86vh);border-radius:8px;overflow:hidden;
+    background:linear-gradient(180deg, rgba(0,0,0,0.75), rgba(10,10,12,0.9));box-shadow:0 20px 80px rgba(0,0,0,0.8);
+    border:1px solid rgba(255,255,255,0.04);position:relative;display:flex;flex-direction:row;
+  }
+
+  /* Left: Terminal */
+  .term{
+    flex:1.1;padding:28px 24px;color:var(--green);background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+    font-size:15px;line-height:1.45;display:flex;flex-direction:column;gap:10px;
+  }
+  .term .title{display:flex;align-items:center;gap:10px}
+  .dot{width:12px;height:12px;border-radius:50%}
+  .dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+  .term .screen{background:rgba(0,0,0,0.25);padding:14px;border-radius:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.02);flex:1;overflow:auto}
+  .line{white-space:pre-wrap;word-break:break-word}
+  .cursor{display:inline-block;width:10px;background:var(--green);margin-left:4px;animation:blink 700ms infinite}
+
+  @keyframes blink {50%{opacity:0}}
+
+  /* Right: Panic panel */
+  .panic{
+    width:340px;background:linear-gradient(180deg, rgba(20,0,0,0.45), rgba(30,0,0,0.6));padding:22px;box-sizing:border-box;
+    border-left:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:18px;
+  }
+  .panic h1{font-size:20px;margin:0;color:var(--red);text-transform:uppercase;letter-spacing:1px}
+  .panic .bigmsg{font-size:22px;color:#fff;background:rgba(0,0,0,0.3);padding:12px;border-radius:6px;text-align:center}
+  .warning{background:rgba(255,50,50,0.06);border:1px solid rgba(255,50,50,0.08);padding:10px;border-radius:6px;color:#f8b8b8}
+  .controls{display:flex;gap:10px;justify-content:center}
+  .btn{padding:10px 12px;border-radius:6px;background:#222;border:1px solid rgba(255,255,255,0.04);color:#fff;cursor:pointer}
+  .btn.danger{background:var(--red);border-color:rgba(255,0,0,0.4)}
+  .small{font-size:12px;color:#aaa;text-align:center}
+
+  /* Glitch overlay */
+  .glitch{
+    position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:screen;opacity:0.18;
+    background-image:
+      linear-gradient(90deg, rgba(255,0,0,0.06) 0, transparent 10%),
+      linear-gradient(90deg, transparent 75%, rgba(0,255,200,0.03) 100%);
+    animation:glitchmove 6s infinite linear;
+  }
+  @keyframes glitchmove{0%{transform:translateX(-3%)}50%{transform:translateX(3%)}100%{transform:translateX(-3%)}}
+
+  /* shaking when panic mode */
+  .shake{animation:shake 0.6s ease-in-out 0s 6}
+  @keyframes shake{
+    10%{transform:translateX(-6px)}
+    30%{transform:translateX(6px)}
+    50%{transform:translateX(-4px)}
+    70%{transform:translateX(4px)}
+    90%{transform:translateX(0)}
+  }
+
+  /* red flashing border */
+  .flash-border{box-shadow:0 0 0 6px rgba(255,50,50,0.06), 0 12px 60px rgba(255,20,20,0.06);border-color:rgba(255,0,0,0.28)}
+  .alarm{position:fixed;right:18px;top:18px;padding:10px 12px;border-radius:6px;background:rgba(255,0,0,0.12);color:var(--red);font-weight:700;z-index:5}
+
+  /* fullscreen instruction */
+  .hint{position:fixed;left:18px;bottom:18px;color:#bbb;font-size:13px;z-index:5}
+  a.link{color:#8ef;text-decoration:underline}
+
+  /* responsive tweaks */
+  @media (max-width:880px){
+    .box{flex-direction:column;height:94vh}
+    .panic{width:100%;border-left:none;border-top:1px solid rgba(255,255,255,0.03)}
+  }
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+
+<div class="overlay" id="overlay">
+  <div class="box" id="box">
+    <div class="term" id="term">
+      <div class="title">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <div style="flex:1;color:#9fb79f;font-size:13px">SYSTEM ALERT • Unauthorized access detected</div>
+      </div>
+
+      <div class="screen" id="screen" aria-live="polite">
+        <!-- Lines will be typed here -->
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" id="panicBtn">Trigger Panic</button>
+        <button class="btn" id="calmBtn">Stop</button>
+        <div style="flex:1"></div>
+        <div class="small">Press <strong>Esc</strong> to exit simulation</div>
+      </div>
+    </div>
+
+    <div class="panic" id="panic">
+      <h1>SECURITY</h1>
+      <div class="bigmsg">YOU'RE NOT A TEACHER</div>
+      <div class="warning">
+        <strong>Immediate action required:</strong>
+        <div style="margin-top:8px">This system has detected an unauthorized professional-level identifier. You are not authorized to proceed. Please leave this website immediately.</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn danger" id="leaveNow">Leave Now</button>
+        <button class="btn" id="ignore">Ignore</button>
+      </div>
+
+      <div class="small">This is a simulated intrusion presentation. No actual files or system settings are modified.</div>
+    </div>
+    <div class="glitch" aria-hidden="true"></div>
+  </div>
+</div>
+
+<div class="alarm" id="alarm" style="display:none">ALERT — SYSTEM COMPROMISED</div>
+<div class="hint">Tip: Press <kbd>Esc</kbd> to close</div>
+
+<script>
+/* ---------------- Matrix background ---------------- */
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+let w, h;
+function resize() {
+  w = canvas.width = innerWidth;
+  h = canvas.height = innerHeight;
+}
+resize();
+addEventListener('resize', () => { resize(); initMatrix(); });
+
+let cols, drops, fontSize = 16;
+function initMatrix(){
+  cols = Math.floor(w / fontSize);
+  drops = Array(cols).fill(1).map(()=> Math.floor(Math.random()*h/fontSize));
+}
+initMatrix();
+
+const letters = "01@#%&*+=-:;.?¥abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function drawMatrix(){
+  ctx.fillStyle = "rgba(0,0,0,0.08)";
+  ctx.fillRect(0,0,w,h);
+  ctx.fillStyle = "#0f0";
+  ctx.font = fontSize + "px monospace";
+  for(let i=0;i<cols;i++){
+    const text = letters.charAt(Math.floor(Math.random()*letters.length));
+    ctx.fillStyle = i%7==0 ? "#39ff14" : "#0f0";
+    ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+    if(drops[i]*fontSize > h && Math.random()>0.975) drops[i]=0;
+    drops[i]++;
+  }
+  requestAnimationFrame(drawMatrix);
+}
+requestAnimationFrame(drawMatrix);
+
+/* --------------- Terminal typing simulation --------------- */
+const screen = document.getElementById('screen');
+const panicBtn = document.getElementById('panicBtn');
+const calmBtn = document.getElementById('calmBtn');
+const leaveNow = document.getElementById('leaveNow');
+const ignore = document.getElementById('ignore');
+const overlay = document.getElementById('overlay');
+const box = document.getElementById('box');
+const alarm = document.getElementById('alarm');
+
+let panicInterval = null;
+let typingQueue = [];
+let typingActive = false;
+
+const introLines = [
+  "Initializing remote scan...",
+  "Verifying credentials...",
+  "WARNING: suspicious profile match — ROLE == TEACHER -> false",
+  "Establishing secure tunnel to telemetry nodes...",
+  "Injecting overlay... [OK]",
+  "Encrypting UI elements... [IN PROGRESS]",
+  "",
+  "YOU'RE NOT A TEACHER, PLEASE LEAVE THIS WEBSITE IMMEDIATELY..."
+];
+
+function enqueue(lines){
+  typingQueue.push(...lines);
+  if(!typingActive) runTyping();
+}
+
+function runTyping(){
+  typingActive = true;
+  if(typingQueue.length===0){ typingActive=false; return; }
+  const line = typingQueue.shift();
+  typeLine(line).then(()=> {
+    const delay = 120 + Math.random()*600;
+    setTimeout(runTyping, delay);
+  });
+}
+
+function typeLine(text){
+  return new Promise(resolve => {
+    const el = document.createElement('div');
+    el.className = 'line';
+    screen.appendChild(el);
+    screen.scrollTop = screen.scrollHeight;
+    let i=0;
+    const cursor = document.createElement('span');
+    cursor.className='cursor';
+    el.appendChild(cursor);
+    const t = setInterval(()=> {
+      if(i>=text.length){
+        clearInterval(t);
+        el.removeChild(cursor);
+        resolve();
+        return;
+      }
+      const ch = text.charAt(i++);
+      el.textContent += ch;
+      el.appendChild(cursor);
+      screen.scrollTop = screen.scrollHeight;
+    }, 30 + Math.random()*70);
+  });
+}
+
+/* ------------- Panic visual behaviors ------------- */
+function startPanic(){
+  if(panicInterval) return;
+  enqueue(introLines);
+  overlay.classList.add('flash-border');
+  box.classList.add('shake');
+  alarm.style.display = 'block';
+
+  // rapid fake 'encryption' lines
+  panicInterval = setInterval(()=> {
+    const times = 1 + Math.floor(Math.random()*3);
+    const noise = Array(times).fill(0).map(()=> randomNoiseLine());
+    enqueue(noise);
+    // occasional severe message
+    if(Math.random() > 0.85) enqueue(["SYSTEM: REVOKING ACCESS — LOGOUT IMMINENT"]);
+    if(Math.random() > 0.92) {
+      // temporary heavy glitch: shake more
+      box.classList.add('shake');
+      setTimeout(()=> box.classList.remove('shake'), 900);
+    }
+  }, 1200);
+
+  // gradually increase matrix opacity & font to feel intense
+  const intensify = setInterval(()=> {
+    canvas.style.opacity = Math.min(0.6, parseFloat(getComputedStyle(canvas).opacity || 0.18) + 0.03);
+    if(parseFloat(canvas.style.opacity) >= 0.6) clearInterval(intensify);
+  }, 350);
+}
+
+function stopPanic(){
+  clearInterval(panicInterval); panicInterval = null;
+  overlay.classList.remove('flash-border');
+  alarm.style.display = 'none';
+  enqueue(["SYSTEM: monitor reset. threat level -> low"]);
+}
+
+function randomNoiseLine(){
+  const phrases = [
+    ">>> 0xA1C24F -- unauthorized module loaded",
+    ">>> decrypting 42% ... 41% ... 40% ...",
+    "[LOG] user_session: mismatch_token",
+    "TRACE: /usr/bin/secure/verify -> FAILED",
+    ">>> STACK TRACE: [null] [0x0] [0xf34a]",
+    "ERROR: CONFIG LOCKED",
+    ">>> wiping temporary credentials...",
+    "<<< CONNECTION TERMINATED >>>"
+  ];
+  return phrases[Math.floor(Math.random()*phrases.length)];
+}
+
+/* ------------- Controls ------------- */
+panicBtn.addEventListener('click', startPanic);
+calmBtn.addEventListener('click', ()=> {
+  stopPanic();
+  enqueue(["User requested stop. Exiting panic sequence..."]);
+});
+leaveNow.addEventListener('click', ()=> {
+  // polite redirect to safe page (simulate leaving)
+  enqueue(["Redirecting to safe page..."]);
+  setTimeout(()=> location.href = "about:blank", 900);
+});
+ignore.addEventListener('click', ()=> {
+  enqueue(["User ignored alert. Monitoring continues..."]);
+});
+
+// Keyboard: Esc closes simulation
+addEventListener('keydown', (e)=>{
+  if(e.key === "Escape") {
+    // Gentle shutdown
+    stopPanic();
+    enqueue(["Escape pressed. Closing simulation..."]);
+    setTimeout(()=> {
+      document.body.innerHTML = "<div style='height:100vh;display:flex;align-items:center;justify-content:center;background:#000;color:#fff;font-family:monospace'><div style='text-align:center'><h2 style='margin:0 0 10px'>Simulation closed</h2><p style='color:#bbb'>You can safely close this tab.</p></div></div>";
+    }, 800);
+  }
+});
+
+/* Auto-start short alarm to set mood (but not sound) */
+enqueue(["NOTICE: Unknown environment signature detected.", "Authenticating identity..."]);
+setTimeout(()=> enqueue(["YOU'RE NOT A TEACHER, PLEASE LEAVE THIS WEBSITE IMMEDIATELY..."]), 2400);
+
+/* optional: small accessibility focus */
+screen.setAttribute('tabindex', '0');
+screen.focus();
+
+</script>
+</body>
+</html>
